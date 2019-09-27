@@ -22,29 +22,30 @@ class ViewTitleHeader extends Component {
     };
   }
   chekifthisIsEmptyToShowError() {
-    var isProblem = false;
     var errorTitle = '';
     if (this.props.isAnyFieldEmpty) {
       switch (this.props.title) {
         case 'Name':
-          isProblem = true;
           errorTitle = 'Please fill ' + this.props.title;
           break;
-        case 'minus':
-          isProblem = true;
+        case 'Company':
           errorTitle = 'Please fill ' + this.props.title;
           break;
-        case 'MovieData':
-          isProblem = true;
+        case 'Address':
+          errorTitle = 'Please fill ' + this.props.title;
+          break;
+        case 'Postcode':
+          errorTitle = 'Please fill ' + this.props.title;
+          break;
+        case 'Email Address':
           errorTitle = 'Please fill ' + this.props.title;
           break;
         default:
-          isProblem = false;
           errorTitle = this.props.title;
           break;
       }
     }
-    return isProblem, errorTitle;
+    return errorTitle;
   }
   render() {
     return (
