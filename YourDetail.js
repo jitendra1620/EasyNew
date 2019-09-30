@@ -9,10 +9,11 @@ import {
   Picker,
   StyleSheet,
   KeyboardAvoidingView,
+  Keyboard,
 } from 'react-native';
 import {Navigation} from 'react-native-navigation';
 import SignatureCapture from 'react-native-signature-capture';
-import {YourDetailsSchema} from './Realm';
+// import {YourDetailsSchema} from './Realm';
 class ViewTitleHeader extends Component {
   constructor(props) {
     super(props);
@@ -20,6 +21,18 @@ class ViewTitleHeader extends Component {
       title: '',
     };
   }
+  validate = text => {
+    console.log(text);
+    let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (reg.test(text) === false) {
+      console.log('Email is Not Correct');
+      this.setState({email: text});
+      return false;
+    } else {
+      this.setState({email: text});
+      console.log('Email is Correct');
+    }
+  };
   chekifthisIsEmptyToShowError() {
     if (this.props.isAnyFieldEmpty) {
       switch (this.props.title) {
@@ -55,6 +68,13 @@ class ViewTitleHeader extends Component {
       titleToSet !== '' &&
       titleToSet !== this.props.title
     ) {
+      colorToSet = 'red';
+    } else if (
+      titleToSet === 'Please fill Email Address' &&
+      !this.props.isEmailValid
+    ) {
+      console.log(this.props.isEmailValid, 'email validation check')
+      titleToSet = 'Plese fill valid Email Address';
       colorToSet = 'red';
     } else {
       titleToSet = this.props.title;
@@ -115,6 +135,7 @@ export default class YourDetail extends Component {
       signatureImage: '',
       emailID: '',
       tax: {type: 'double', default: 0},
+      isEmailValid:false
     };
   }
   renderBackButton() {
@@ -144,6 +165,8 @@ export default class YourDetail extends Component {
     this.refs.sign.saveImage();
   }
   checkIfAnyFiledIsEmpty() {
+    console.log(this.validate(this.state.emailID), 'first check')
+    this.setState({isEmailValid:this.validate(this.state.emailID)});
     if (
       this.state.name === '' ||
       this.state.compony === '' ||
@@ -151,13 +174,24 @@ export default class YourDetail extends Component {
       this.state.addressTwo === '' ||
       this.state.addressThree === '' ||
       this.state.pincode === '' ||
-      this.state.emailID === ''
+      !this.validate(this.state.emailID)
     ) {
       this.setState({isAnyFieldEmpty: true});
       return true;
     }
     return false;
   }
+  validate = text => {
+    console.log(text);
+    let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (reg.test(text) === false) {
+      console.log('Email is Not Correct');
+      this.setState({email: text});
+      return false;
+    } else {
+      return true
+    }
+  };
   render() {
     return (
       <KeyboardAvoidingView behavior="padding" style={{flex: 1}}>
@@ -265,6 +299,7 @@ export default class YourDetail extends Component {
               title="Email Address"
               isAnyFieldEmpty={this.state.isAnyFieldEmpty}
               value={this.state.emailID}
+              isEmailValid={this.state.isEmailValid}
             />
             <ViewTextInput
               placeholder="Enter Your Email Address"
@@ -301,11 +336,12 @@ export default class YourDetail extends Component {
 
             <Button
               onPress={() => {
+                Keyboard.dismiss();
                 if (this.checkIfAnyFiledIsEmpty()) {
                   // eslint-disable-next-line no-alert
                   // alert('Please fill every field');
                 } else {
-                  _saveYourDetailsInDataba
+                  // _saveYourDetailsInDataba
                   Navigation.dismissModal(this.props.componentId);
                 }
               }}
